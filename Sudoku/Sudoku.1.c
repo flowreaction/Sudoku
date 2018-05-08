@@ -1,9 +1,9 @@
 /*
-Aufgabe		
+Aufgabe		Sudoku
 Autor		Florian Bopp
-Datum		
+Datum		7.5.18
 
-Kurzbeschreibung:	
+Kurzbeschreibung:	Dieses Programm überprüft ob ein Sudoku Feld korrekt gelöst ist.
 */
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -26,10 +26,14 @@ int blocks(int feld[9][9], int i, int j, int block[9]);
 
 /******************Main function********************/
 int main(void) {
-	int Feld[9][9] = { 0 };
-	int gelFeld[9][9] = { {1,2,3,4,5,6,7,8,9}, {4,5,6,7,8,9,1,2,3}, {2,3,4,5,6,7,8,9,1}, {7,8,9,1,2,3,4,5,6}, {5,6,7,8,9,1,2,3,4}, {8,9,1,2,3,4,5,6,7}, {3,4,5,6,7,8,9,1,2}, {6,7,8,9,1,2,3,4,5}, {9,1,2,3,4,5,6,7,8} };
+	
+	int Feld[9][9] = { 0 }; //null feld
+	//gelöstes Feld
+	int gelFeld[9][9] = { {1,2,3,4,5,6,7,8,9}, {4,5,6,7,8,9,1,2,3}, {7,8,9,1,2,3,4,5,6}, {2,3,4,5,6,7,8,9,1}, {5,6,7,8,9,1,2,3,4}, {8,9,1,2,3,4,5,6,7}, {3,4,5,6,7,8,9,1,2}, {6,7,8,9,1,2,3,4,5}, {9,1,2,3,4,5,6,7,8} };
+	//nichtgelöstes Feld
+	int nichtgelFeld[9][9] = { { 1,2,3,4,5,6,7,8,9 },{ 4,5,6,7,8,9,1,2,3 },{ 7,8,9,1,2,3,4,5,6 },{ 2,3,4,5,6,7,8,9,1 },{ 5,6,7,8,9,1,2,3,4 },{ 8,9,1,2,3,4,5,6,7 },{ 3,4,5,6,7,8,9,1,2 },{ 6,7,8,9,1,2,3,4,5 },{ 9,1,2,3,4,5,6,7,8 } };
 
-	ausgabe(gelFeld);
+	ausgabe(gelFeld); //gelFeld steht für gelöstes Feld
 	if (ist_loesung(gelFeld))
 		printf("Das Sudoku Feld ist korrekt geloest!\n");
 	else
@@ -66,28 +70,23 @@ void nullen(int array1[9]) {
 		array1[i] = 0;
 }
 
-int ist_loesung(int feld[9][9]) {
-	/*
+int ist_loesung(int feld[9][9]) { //lösungsfunktion
 	int spalte[9] = { 0 };
 	int zeile[9] = { 0 };
 	int block[9] = { 0 };
-	*/
 	
-	for (int i = 0; i < 9; i++)
-	{
-		int spalte[9] = { 0 };
-		int zeile[9] = { 0 };
-		int block[9] = { 0 };
+	for (int i = 0; i < 9; i++)	{
+		nullen(spalte);
+		nullen(zeile);
 
-		for (int j = 0; j < 9; j++)
-		{
-			if (spalten(feld, i, j, spalte) == 0)
+		for (int j = 0; j < 9; j++)		{
+			if (!spalten(feld, i, j, spalte)) //spaltenfunktion wird aufgerufen
 				return 0;
-			else if (zeilen(feld, i, j, zeile) == 0)
+			else if (!zeilen(feld, i, j, zeile)) //zeilenfunktion wird aufgerufen
 				return 0;
 			if ((i % 3 == 0 || i == 0) && (j % 3 == 0 || j == 0)) { //wenn an einer ecke eines 3x3 Block
 				nullen(block);
-				if (blocks(feld, i, j, block) == 0)
+				if (!blocks(feld, i, j, block)) //blockfunktion wird aufgerufen
  					return 0;
 			}
 		}
@@ -97,7 +96,7 @@ int ist_loesung(int feld[9][9]) {
 
 int spalten(int feld[9][9], int i, int j, int spalte[9]) {
 	//wenn in einer spalte eine zahl doppelt vorkommt wird 0 ausgegeben sonst 1
-
+	//das Array Spalte speichert die Anzahl der vorkommenden zahlen
 	switch (feld[j][i]) {	//i und j sind vertauscht damit die spalten durchgegangen werden und nicht die reihen
 	case 1:		spalte[0]++;
 		if (spalte[0] > 1)
@@ -143,6 +142,7 @@ int spalten(int feld[9][9], int i, int j, int spalte[9]) {
 }
 
 int zeilen(int feld[9][9], int i, int j, int zeile[9]) {
+	//das Array Zeile speichert die Anzahl der vorkommenden zahlen
 	switch (feld[i][j]) {
 	case 1:		zeile[0]++;
 		if (zeile[0] > 1)
@@ -187,13 +187,11 @@ int zeilen(int feld[9][9], int i, int j, int zeile[9]) {
 }
 
 int blocks(int feld[9][9], int i, int j, int block[9]) {
-
-	for (int k = 0; k < 3; k++)
-	{
-		for (int l = 0; l < 3; l++)
-		{
-			switch (feld[i + k][j + l])
-			{
+	//zwei weitere vorloops um einen 3x3 block zu durchlaufen
+	//das Array block speichert die Anzahl der vorkommenden zahlen
+	for (int k = 0; k < 3; k++)	{
+		for (int l = 0; l < 3; l++)	{
+			switch (feld[i + k][j + l])	{
 			case 1:		block[0]++;
 				if (block[0] > 1)
 					return 0;
@@ -239,8 +237,7 @@ int blocks(int feld[9][9], int i, int j, int block[9]) {
 	return 1;
 }
 
-void flashStandardInput(void)
-{
+void flashStandardInput(void){
 	int intCharacter;
 	while ((intCharacter = getchar()) != '\n' && intCharacter != EOF);
 }
